@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../contexts/ThemeContext';
+import { lightTheme, darkTheme } from '../themes/themes';
 
 import closeIcon from '../../assets/img/close.png';
 import questionIcon from '../../assets/img/question.png';
@@ -11,7 +13,8 @@ export default function Transferir() {
     const [valor, setValor] = useState('');
     const [destinatario, setDestinatario] = useState('');
     const [saldo, setSaldo] = useState(1000);
-    
+    const { isDarkMode } = useTheme();
+    const theme = isDarkMode ? darkTheme : lightTheme;
 
     useEffect(() => {
         const carregarSaldo = async () => {
@@ -29,7 +32,7 @@ export default function Transferir() {
     }, []);
 
     const handlePressClose = () => {
-        navigation.navigate('AreaPix');
+        navigation.goBack();
     }
 
     const handleTransferir = async () => {
@@ -63,48 +66,48 @@ export default function Transferir() {
     }
 
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handlePressClose} style={styles.iconButton}>
-                    <Image source={closeIcon} style={styles.icon} />
+                    <Image source={closeIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Transferência</Text>
+                <Text style={[styles.headerTitle, { color: theme.textColor }]}>Transferência</Text>
                 <TouchableOpacity style={styles.iconButton}>
-                    <Image source={questionIcon} style={styles.icon} />
+                    <Image source={questionIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
                 </TouchableOpacity>
             </View>
-            <View style={styles.content}>
-                <Text style={styles.title}>Qual é o valor da transferência?</Text>
-                <Text style={styles.subtitle}>Saldo disponível: R$ {saldo.toFixed(2)}</Text>
-                <View style={styles.inputWrapper}>
-                    <Text style={styles.currencySymbol}>R$</Text>
+            <ScrollView contentContainerStyle={styles.content}>
+                <Text style={[styles.title, { color: theme.textColor }]}>Qual é o valor da transferência?</Text>
+                <Text style={[styles.subtitle, { color: theme.textColor }]}>Saldo disponível: R$ {saldo.toFixed(2)}</Text>
+                <View style={[styles.inputWrapper, { borderBottomColor: theme.dividerColor }]}>
+                    <Text style={[styles.currencySymbol, { color: theme.textColor }]}>R$</Text>
                     <TextInput 
-                        style={styles.valueInput}
+                        style={[styles.valueInput, { color: theme.textColor }]}
                         placeholder="0,00"
-                        placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                        placeholderTextColor={theme.textColor + '80'}
                         keyboardType="numeric"
                         value={valor}
                         onChangeText={setValor}
                     />
                 </View>
                 <TextInput 
-                    style={styles.destinatarioInput}
+                    style={[styles.destinatarioInput, { borderBottomColor: theme.dividerColor, color: theme.textColor }]}
                     placeholder="Para quem você quer transferir?"
-                    placeholderTextColor="rgba(255, 255, 255, 0.5)"
+                    placeholderTextColor={theme.textColor + '80'}
                     value={destinatario}
                     onChangeText={setDestinatario}
                 />
-            </View>
-            <TouchableOpacity style={styles.transferButton} onPress={handleTransferir}>
-                <Text style={styles.transferButtonText}>Transferir</Text>
+            </ScrollView>
+            <TouchableOpacity style={[styles.transferButton, { backgroundColor: theme.buttonBackground }]} onPress={handleTransferir}>
+                <Text style={[styles.transferButtonText, { color: theme.buttonTextColor }]}>Transferir</Text>
             </TouchableOpacity>
-        </View>
+        </SafeAreaView>
     );
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'black',
     },
     header: {
         flexDirection: 'row',
@@ -115,7 +118,6 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     headerTitle: {
-        color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -134,52 +136,43 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: 'white',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 16,
-        color: 'rgba(255, 255, 255, 0.7)',
+        opacity: 0.7,
         marginBottom: 30,
     },
     inputWrapper: {
         flexDirection: 'row',
         alignItems: 'center',
         borderBottomWidth: 1,
-        borderBottomColor: 'white',
         marginBottom: 30,
     },
     currencySymbol: {
-        color: 'white',
         fontSize: 24,
         marginRight: 10,
     },
     valueInput: {
         flex: 1,
-        color: 'white',
         fontSize: 32,
         fontWeight: 'bold',
         paddingVertical: 10,
     },
     destinatarioInput: {
         borderBottomWidth: 1,
-        borderBottomColor: 'white',
-        color: 'white',
         fontSize: 18,
         paddingVertical: 10,
     },
     transferButton: {
-        backgroundColor: '#FF0000',
         paddingVertical: 15,
-        borderRadius: 10,
+        borderRadius: 25,
         marginHorizontal: 30,
         marginBottom: 30,
     },
     transferButtonText: {
-        color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
         textAlign: 'center',
     },
 });
-

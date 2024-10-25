@@ -1,10 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, SafeAreaView, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useTheme } from '../contexts/ThemeContext';
+import { lightTheme, darkTheme } from '../themes/themes';
 import questionIcon from '../../assets/img/question.png';  
 import closeIcon from '../../assets/img/close.png';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import securityIcon from '../../assets/img/security.png';
 import configsIcon from '../../assets/img/settings.png';
+
 const functions = [
     {id:1, icon: 'cash-fast', name: 'Transferir', route:'Transferir' },
     {id:2, icon: 'barcode', name: 'Pagar' },
@@ -16,6 +20,8 @@ const functions = [
 
 export default function AreaPix() {
     const navigation = useNavigation();
+    const { isDarkMode } = useTheme();
+    const theme = isDarkMode ? darkTheme : lightTheme;
 
     const handlePressClose = () => {
         navigation.navigate('Home');
@@ -25,56 +31,58 @@ export default function AreaPix() {
     }
 
     return (
-        <View style={styles.container}>
-            <View style={styles.icons}>
-                <TouchableOpacity onPress={handlePressClose} style={styles.iconClose}>
-                    <Image source={closeIcon} style={styles.icon} />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.iconQuestion}>
-                    <Image source={questionIcon} style={styles.icon} />
-                </TouchableOpacity>
-            </View>
-            <View style={styles.pixContainer}>
-                <Text style={styles.pixTitle}>Área Pix</Text>
-                <Text style={styles.pixSubtitle}>Envie e receba pagamentos a qualquer hora e dia da semana, sem pagar nada por isso</Text>
-            </View>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
+            <ScrollView>
+                <View style={styles.icons}>
+                    <TouchableOpacity onPress={handlePressClose} style={styles.iconClose}>
+                        <Image source={closeIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.iconQuestion}>
+                        <Image source={questionIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
+                    </TouchableOpacity>
+                </View>
+                <View style={styles.pixContainer}>
+                    <Text style={[styles.pixTitle, { color: theme.textColor }]}>Área Pix</Text>
+                    <Text style={[styles.pixSubtitle, { color: theme.textColor }]}>Envie e receba pagamentos a qualquer hora e dia da semana, sem pagar nada por isso</Text>
+                </View>
 
-            <View style={styles.pixButtons}>
-                {functions.map((item) => (
-                    <View key={item.id} style={styles.pixButtonWrapper}>
-                        <TouchableOpacity style={styles.Button} onPress={() => handlePressNavigate(item)}>
-                            <View style={styles.iconContainer}>
-                                <Icon name={item.icon} size={24} color="white" />
-                            </View>
-                        </TouchableOpacity>
-                        <Text style={styles.pixButtonText}>{item.name}</Text>
+                <View style={styles.pixButtons}>
+                    {functions.map((item) => (
+                        <View key={item.id} style={styles.pixButtonWrapper}>
+                            <TouchableOpacity 
+                                style={[styles.Button, { backgroundColor: theme.functionIconBackground }]} 
+                                onPress={() => handlePressNavigate(item)}
+                            >
+                                <View style={styles.iconContainer}>
+                                    <Icon name={item.icon} size={24} color={theme.functionIconColor} />
+                                </View>
+                            </TouchableOpacity>
+                            <Text style={[styles.pixButtonText, { color: theme.textColor }]}>{item.name}</Text>
+                        </View>
+                    ))}
+                </View>
+
+                <View style={[styles.divider, { backgroundColor: theme.dividerColor }]}></View>
+                <View style={styles.preferences}>
+                    <View style={styles.preferencesChaves}>
+                        <Image source={securityIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
+                        <Text style={[styles.preferencesText, { color: theme.textColor }]}>Registrar ou trazer chaves</Text>
                     </View>
-                ))}
-            </View>
-
-            <View style={styles.divider}></View>
-            <View style={styles.preferences}>
-                <View style={styles.preferencesChaves}>
-                    <Image source={securityIcon} style={styles.icon} />
-                    <Text style={styles.preferencesText}>Registrar ou trazer chaves</Text>
+                    <View style={[styles.divider2, { backgroundColor: theme.dividerColor }]}></View>
+                    <View style={styles.preferencesConfigs}>
+                        <Image source={configsIcon} style={[styles.icon, { tintColor: theme.iconColor }]} />
+                        <Text style={[styles.preferencesConfigsText, { color: theme.textColor }]}>Configurar Pix</Text>
+                    </View>
+                    <View style={[styles.divider2, { backgroundColor: theme.dividerColor }]}></View>
                 </View>
-                <View style={styles.divider2}></View>
-                <View style={styles.preferencesConfigs}>
-                    <Image source={configsIcon} style={styles.icon} />
-                    <Text style={styles.preferencesConfigsText}>Configurar Pix</Text>
-                </View>
-                <View style={styles.divider2}></View>
-            </View>
-        </View>
-
-        
+            </ScrollView>
+        </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: 'black',
     },
     pixContainer: {
         margin: 30,
@@ -84,12 +92,10 @@ const styles = StyleSheet.create({
         marginTop: 20,
         fontSize: 24,
         fontWeight: 'bold',
-        color: 'white',
     },
     pixSubtitle: {
         marginTop: 10,
         fontSize: 17,
-        color: 'white',
     },
     icons: {
         flexDirection: 'row',
@@ -121,7 +127,6 @@ const styles = StyleSheet.create({
     Button: {
         padding: 10,
         borderRadius: 32,
-        backgroundColor: '#1E1E1E',
         width: 64,
         height: 64,
         alignItems: 'center',
@@ -130,18 +135,15 @@ const styles = StyleSheet.create({
     pixButtonText: {
         marginTop: 10,
         fontSize: 12,
-        color: 'white',
         textAlign: 'center',
     },
     divider: {
         width: '100%',
         height: 1,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         marginTop: 20, 
     },
     preferences: {
         margin: 30,
-        
     },
     preferencesChaves: {
         flexDirection: 'row',
@@ -150,7 +152,6 @@ const styles = StyleSheet.create({
     },
     preferencesText: {
         fontSize: 16,
-        color: 'white',
     },
     preferencesConfigs: {
         marginTop: 20,
@@ -160,12 +161,10 @@ const styles = StyleSheet.create({
     },
     preferencesConfigsText: {
         fontSize: 16,
-        color: 'white',
     },
     divider2: {
         width: '100%',
         height: 1,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         marginTop: 20, 
     },
 }); 
