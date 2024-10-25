@@ -2,12 +2,21 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, View, Text, SafeAreaView, Image, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+
 import HomeHeader from "../components/homeHeader";
 import FunctionsHome from "../components/functionsHome";
 import CreditCardIcon from '../../assets/img/credit_card.png';
 
+import { ThemeProvider,useTheme } from '../contexts/ThemeContext';
+import{lightTheme,darkTheme} from '../themes/themes';
+
+
+
 export default function HomeScreen() {
     const [saldo, setSaldo] = useState(1000);
+    const [isVisible, setIsVisible] = useState(true);
+    const { isDarkMode } = useTheme();
+    const theme = isDarkMode ? darkTheme : lightTheme;
 
     useFocusEffect(
         React.useCallback(() => {
@@ -26,18 +35,28 @@ export default function HomeScreen() {
         }, [])
     );
 
+    const toggleVisibility = () => {
+        setIsVisible((prevState) => {
+            console.log('Toggling visibility:', !prevState);
+            return !prevState;
+        });
+    };
+
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView style={[styles.container, { backgroundColor: theme.backgroundColor }]}>
             <ScrollView contentContainerStyle={styles.scrollViewContent}>
-                <HomeHeader />
+                <HomeHeader 
+                    onToggleVisibility={toggleVisibility} 
+                    isVisible={isVisible}
+                />
                 <View style={styles.content}>
-                    <View style={styles.containerCard}>
-                        <Text style={styles.titleCard}>
+                    <View style={[styles.containerCard]}>
+                        <Text style={[styles.titleCard, { color: theme.textColor }]}>
                             Conta
                         </Text>
                         <View style={styles.valorCard}>
-                            <Text style={styles.valorText}>
-                                R$ {saldo.toFixed(2)}
+                            <Text style={[styles.valorText, { color: theme.textColor }]}>
+                                {isVisible ? `R$ ${saldo.toFixed(2)}` : '••••••'}
                             </Text>
                         </View>
                     </View>
@@ -45,66 +64,66 @@ export default function HomeScreen() {
                 <View style={styles.functionsContainer}>
                     <FunctionsHome />
                 </View>
-                <TouchableOpacity style={styles.myCard}>
-                    <Image source={CreditCardIcon} style={styles.myCardImage}></Image>
-                    <Text style={styles.myCardText}>
+                <TouchableOpacity style={[styles.myCard, { backgroundColor: theme.cardBackground }]}>
+                    <Image source={CreditCardIcon} style={[styles.myCardImage, { tintColor: theme.iconColor }]} />
+                    <Text style={[styles.myCardText, { color: theme.textColor }]}>
                         Meus cartões
                     </Text>
                 </TouchableOpacity>
 
-                <View style={styles.divider}></View>
+                <View style={[styles.divider, { backgroundColor: theme.dividerColor }]}></View>
 
                 <View style={styles.cardsContainer}>
-                    <Text style={styles.cardsTitle}>
+                    <Text style={[styles.cardsTitle, { color: theme.textColor }]}>
                         Cartão de Crédito
                     </Text>
-                    <Text style={styles.cardSubtitle}>
+                    <Text style={[styles.cardSubtitle, { color: theme.textColor }]}>
                         Fatura atual
                     </Text>
                     <View style={styles.cardValue}>
-                        <Text style={styles.cardValueText}>
+                        <Text style={[styles.cardValueText, { color: theme.textColor }]}>
                             R$ 100,00
                         </Text>
-                        <Text style={styles.cardLimitText}>
+                        <Text style={[styles.cardLimitText, { color: theme.textColor }]}>
                             Limite disponível R$ 400,00
                         </Text>
-                        <Text style={styles.cardVencimentoText}>
+                        <Text style={[styles.cardVencimentoText, { color: theme.textColor }]}>
                             Vencimento em 22 OUT
                         </Text>
                     </View>
-                    <View  style={styles.cardButtonContainer}>
-                        <TouchableOpacity style={styles.cardButton}>
-                            <Text style={styles.cardButtonText}>
-                            Pagar
-                        </Text>
+                    <View style={styles.cardButtonContainer}>
+                        <TouchableOpacity style={[styles.cardButton,{backgroundColor: theme.paycardBackground}]}>
+                            <Text style={[styles.cardButtonText, { color: theme.textColor } ]}>
+                                Pagar
+                            </Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.parcelarButton}>
-                            <Text style={styles.parcelarButtonText}>
+                        <TouchableOpacity style={[styles.parcelarButton]}>
+                            <Text style={[styles.parcelarButtonText, { color: theme.textColor }]}>
                                 Parcelar
                             </Text>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                <View style={styles.divider}></View>
+                <View style={[styles.divider, { backgroundColor: theme.dividerColor }]}></View>
 
                 <View style={styles.emprestimoContainer}>
-                    <Text style={styles.emprestimoTitle}>
+                    <Text style={[styles.emprestimoTitle, { color: theme.textColor }]}>
                         Empréstimo
                     </Text>
-                    <Text style={styles.emprestimoSubtitle}>
+                    <Text style={[styles.emprestimoSubtitle, { color: theme.textColor }]}>
                         Dinheiro parado no FGTS? você pode antecipar até 12 parcelas do seu saque-aniversário.
                     </Text>
                 </View>
 
-                <View style={styles.divider}></View>
+                <View style={[styles.divider, { backgroundColor: theme.dividerColor }]}></View>
 
                 <View style={styles.proxPayment}>
-                    <Text style={styles.proxPaymentTitle}>
+                    <Text style={[styles.proxPaymentTitle, { color: theme.textColor }]}>
                         Próximo pagamento
                     </Text>
-                    <Text style={styles.proxPaymentSubtitle}>
+                    <Text style={[styles.proxPaymentSubtitle, { color: theme.textColor }]}>
                         Terça-feira, 22 de Outubro
                     </Text>
                 </View>
@@ -147,8 +166,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         gap: 10,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-        margin:30,
+        margin: 30,
         padding: 10,
         borderRadius: 10,
     },
@@ -160,12 +178,10 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 14,
         fontWeight: '500',
-        
     },
     divider: {
         width: '100%',
         height: 1,
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
         marginTop: 20, 
     },
     cardsContainer: {
@@ -263,4 +279,12 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '400',
     },
-}); 
+    themeToggle: {
+        padding: 10,
+        alignItems: 'center',
+    },
+    themeToggleText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+});

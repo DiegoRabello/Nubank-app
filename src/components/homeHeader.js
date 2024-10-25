@@ -2,32 +2,42 @@ import React from 'react';
 import { View, StyleSheet, SafeAreaView, Image, TouchableOpacity, Text } from "react-native";
 import userIcon from '../../assets/img/User.png'; 
 import visibilityIcon from '../../assets/img/visibility.png';
+import visibilityOffIcon from '../../assets/img/visibility_off.png';
 import questionIcon from '../../assets/img/question.png';   
-import securityIcon from '../../assets/img/security.png';
+// import securityIcon from '../../assets/img/security.png';
+import { ThemeProvider,useTheme } from '../contexts/ThemeContext';
+import{lightTheme,darkTheme} from '../themes/themes';
+import ThemeToggleButton from './themebutton';
 
-const IconButton = ({ source, style }) => (
-    <TouchableOpacity style={[styles.iconContainer, style]}>
+const IconButton = ({ source, style, onPress }) => (
+    <TouchableOpacity style={[styles.iconContainer, style]} onPress={onPress}>
         <Image source={source} style={styles.icon} />
     </TouchableOpacity>
 );
 
-export default function HomeHeader() {
+export default function HomeHeader({ onToggleVisibility, isVisible }) {
+    const { isDarkMode } = useTheme();
+    const theme = isDarkMode ? darkTheme : lightTheme;
+    console.log('HomeHeader isVisible:', isVisible);
     return (
-        <SafeAreaView style={styles.safeArea}>
+        <SafeAreaView style={[styles.safeArea]}>
             <View style={styles.container}>
                 <View style={styles.topSection}>
-                    <TouchableOpacity>
+                    <TouchableOpacity style={styles.userIconContainer}>
                         <Image source={userIcon} style={styles.userIcon} />
                     </TouchableOpacity>
                     <View style={styles.iconGroup}>
-                        <IconButton source={visibilityIcon} />
+                        <IconButton 
+                            source={isVisible ? visibilityIcon : visibilityOffIcon} 
+                            onPress={onToggleVisibility} 
+                        />
                         <IconButton source={questionIcon} />
-                        <IconButton source={securityIcon} />
+                        <ThemeToggleButton />
                     </View>
                 </View>
                 <View style={styles.content}>
-                    <Text style={styles.title}>Olá, Diego</Text>
-                    <Text style={styles.subtitle}>Bem-vindo(a) de volta!</Text>
+                    <Text style={[styles.title]}>Olá, Diego</Text>
+                    <Text style={[styles.subtitle]}>Bem-vindo(a) de volta!</Text>
                 </View>
             </View>
         </SafeAreaView>
@@ -36,7 +46,7 @@ export default function HomeHeader() {
 
 const styles = StyleSheet.create({
     safeArea: {
-        backgroundColor: '#830AD1',
+        backgroundColor: 'purple',
         width: '100%',
         height: '19%',
     },
@@ -52,14 +62,24 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
     },
+    userIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255, 255, 255, 0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
     userIcon: {
         width: 24,
         height: 24,
         tintColor: 'white',
+    
     },
     iconGroup: {
         flexDirection: 'row',
         gap: 16,
+        alignItems: 'center',
     },
     iconContainer: {
         width: 40,

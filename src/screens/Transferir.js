@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image, TextInput, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -11,6 +11,7 @@ export default function Transferir() {
     const [valor, setValor] = useState('');
     const [destinatario, setDestinatario] = useState('');
     const [saldo, setSaldo] = useState(1000);
+    
 
     useEffect(() => {
         const carregarSaldo = async () => {
@@ -62,10 +63,7 @@ export default function Transferir() {
     }
 
     return (
-        <KeyboardAvoidingView 
-            behavior={Platform.OS === "ios" ? "padding" : "height"}
-            style={styles.container}
-        >
+        <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={handlePressClose} style={styles.iconButton}>
                     <Image source={closeIcon} style={styles.icon} />
@@ -100,10 +98,9 @@ export default function Transferir() {
             <TouchableOpacity style={styles.transferButton} onPress={handleTransferir}>
                 <Text style={styles.transferButtonText}>Transferir</Text>
             </TouchableOpacity>
-        </KeyboardAvoidingView>
+        </View>
     );
 }
-
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -185,3 +182,4 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
 });
+
