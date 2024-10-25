@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, ScrollView, View, Text, SafeAreaView, Image, TouchableOpacity } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
-
+import { useNavigation } from '@react-navigation/native';
 import HomeHeader from "../components/homeHeader";
 import FunctionsHome from "../components/functionsHome";
 import CreditCardIcon from '../../assets/img/credit_card.png';
@@ -17,6 +17,12 @@ export default function HomeScreen() {
     const [isVisible, setIsVisible] = useState(true);
     const { isDarkMode } = useTheme();
     const theme = isDarkMode ? darkTheme : lightTheme;
+
+
+    const navigation = useNavigation();
+    const handleNavigateToCartoes = () => {
+        navigation.navigate('Cartoes');
+    };
 
     useFocusEffect(
         React.useCallback(() => {
@@ -64,7 +70,7 @@ export default function HomeScreen() {
                 <View style={styles.functionsContainer}>
                     <FunctionsHome />
                 </View>
-                <TouchableOpacity style={[styles.myCard, { backgroundColor: theme.cardBackground }]}>
+                <TouchableOpacity style={[styles.myCard, { backgroundColor: theme.cardBackground }]} onPress={handleNavigateToCartoes}>
                     <Image source={CreditCardIcon} style={[styles.myCardImage, { tintColor: theme.iconColor }]} />
                     <Text style={[styles.myCardText, { color: theme.textColor }]}>
                         Meus cartões
