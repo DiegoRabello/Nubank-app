@@ -11,7 +11,7 @@ const ThemeToggleButton = () => {
       <MaterialCommunityIcons 
         name={isDarkMode ? 'white-balance-sunny' : 'moon-waning-crescent'} 
         size={24} 
-        color={isDarkMode ? '#FFFFFF' : '#000000'} 
+        color={isDarkMode ? '#FFFFFF' : '#ffffff'} 
       />
     </TouchableOpacity>
   );
